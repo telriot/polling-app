@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react"
+import { Switch, Route } from "react-router-dom"
+import Landing from "./components/landing/Landing"
+import MyPolls from "./components/myPolls/MyPolls"
+import NewPoll from "./components/newPoll/NewPoll"
+import Navbar from "./components/layout/Navbar"
+import { makeStyles } from "@material-ui/core/styles"
 
+const useStyles = makeStyles((theme) => ({
+  container: {
+    paddingTop: "40px",
+  },
+}))
 function App() {
+  const classes = useStyles()
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Route exact path="/*">
+        <Navbar />
+      </Route>
+      <div className={classes.container}>
+        <Switch>
+          <Route exact path="/">
+            <Landing />
+          </Route>
+          <Route exact path="/my-polls">
+            <MyPolls />
+          </Route>
+          <Route exact path="/new-poll">
+            <NewPoll />
+          </Route>
+        </Switch>
+      </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

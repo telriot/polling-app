@@ -1,0 +1,4 @@
+export const TYPES = {
+  SET_AUTH_STATE: "SET_AUTH_STATE",
+  SET_AUTH_USER: "SET_AUTH_USER",
+}

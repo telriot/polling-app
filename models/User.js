@@ -3,6 +3,9 @@ const Schema = mongoose.Schema
 
 const UserSchema = new Schema({
   name: String,
+  screenName: String,
+  twitterId: String,
+  profileImageUlr: String,
   polls: [
     {
       type: Schema.Types.ObjectId,
