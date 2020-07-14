@@ -3,6 +3,7 @@ import { Switch, Route } from "react-router-dom"
 import Landing from "./components/landing/Landing"
 import MyPolls from "./components/myPolls/MyPolls"
 import NewPoll from "./components/newPoll/NewPoll"
+import PollDetail from "./components/pollDetail/PollDetail"
 import Navbar from "./components/layout/Navbar"
 import { makeStyles } from "@material-ui/core/styles"
 
@@ -28,6 +29,9 @@ function App() {
           </Route>
           <Route exact path="/new-poll">
             <NewPoll />
+          </Route>
+          <Route exact path="/polls/:pollId">
+            <PollDetail />
           </Route>
         </Switch>
       </div>

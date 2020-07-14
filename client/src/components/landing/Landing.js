@@ -2,13 +2,13 @@ import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import {
   List,
-  ListItem,
-  ListItemText,
-  Divider,
   Paper,
   Container,
   Typography,
+  CircularProgress,
 } from "@material-ui/core"
+import PollItem from "../generic/PollItem"
+import axios from "axios"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -21,6 +21,23 @@ const useStyles = makeStyles((theme) => ({
 const polls = ["Pollo", "Polletto", "pollino", "pollamelo", "polopolopolopolo"]
 function Landing() {
   const classes = useStyles()
+  const [allPolls, setAllPolls] = React.useState([])
+  const [isLoading, setIsLoading] = React.useState(false)
+  const fetchAllPolls = async () => {
+    try {
+      setIsLoading(true)
+      const response = await axios.get("/api/polls/")
+      setAllPolls(response.data)
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false)
+
+      console.log(error)
+    }
+  }
+  React.useEffect(() => {
+    fetchAllPolls()
+  }, [])
   return (
     <Container>
       <Paper className={classes.paper} elevation={3}>
@@ -33,22 +50,21 @@ function Landing() {
         <Typography gutterBottom variant="body1">
           Select a poll to see the results and vote, or make a new poll!
         </Typography>
-        <List>
-          {polls.map((poll, index) =>
-            index === 0 ? (
-              <ListItem button>
-                <ListItemText primary={poll} />
-              </ListItem>
-            ) : (
-              <>
-                <Divider />
-                <ListItem button>
-                  <ListItemText primary={poll} />
-                </ListItem>
-              </>
-            )
-          )}
-        </List>
+        {isLoading ? (
+          <CircularProgress size={80} thickness={6} />
+        ) : (
+          <List>
+            {allPolls.length
+              ? allPolls.map((poll, index) => (
+                  <PollItem
+                    refreshPolls={setAllPolls}
+                    index={index}
+                    poll={poll}
+                  />
+                ))
+              : null}
+          </List>
+        )}
       </Paper>
     </Container>
   )
