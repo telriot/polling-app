@@ -1,4 +1,5 @@
 import React from "react"
+import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles } from "@material-ui/core/styles"
 import {
   List,
@@ -11,18 +12,31 @@ import PollItem from "../generic/PollItem"
 import axios from "axios"
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    [theme.breakpoints.down("xs")]: {
+      padding: theme.spacing(0),
+    },
+  },
   paper: {
+    minHeight: "350px",
     padding: theme.spacing(3),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
+  spinner: {
+    marginTop: theme.spacing(3),
+    alignSelf: "center",
+    justifySelf: "center",
+  },
 }))
-const polls = ["Pollo", "Polletto", "pollino", "pollamelo", "polopolopolopolo"]
+
 function Landing() {
   const classes = useStyles()
+  const isSM = useMediaQuery("(min-width:600px)")
   const [allPolls, setAllPolls] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(false)
+
   const fetchAllPolls = async () => {
     try {
       setIsLoading(true)
@@ -35,23 +49,29 @@ function Landing() {
       console.log(error)
     }
   }
+
   React.useEffect(() => {
     fetchAllPolls()
   }, [])
+
   return (
-    <Container>
-      <Paper className={classes.paper} elevation={3}>
-        <Typography gutterBottom variant="h3">
+    <Container className={classes.container}>
+      <Paper className={classes.paper} elevation={isSM ? 3 : 0}>
+        <Typography align="center" gutterBottom variant="h3">
           Polling App
         </Typography>
-        <Typography gutterBottom variant="body1">
+        <Typography align="center" gutterBottom variant="body1">
           These are all the hosted polls:
         </Typography>
-        <Typography gutterBottom variant="body1">
+        <Typography align="center" gutterBottom variant="body1">
           Select a poll to see the results and vote, or make a new poll!
         </Typography>
         {isLoading ? (
-          <CircularProgress size={80} thickness={6} />
+          <CircularProgress
+            className={classes.spinner}
+            size={80}
+            thickness={6}
+          />
         ) : (
           <List>
             {allPolls.length

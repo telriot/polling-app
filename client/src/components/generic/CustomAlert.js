@@ -1,7 +1,7 @@
 import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import Alert from "@material-ui/lab/Alert"
 import { Collapse, IconButton } from "@material-ui/core"
+import Alert from "@material-ui/lab/Alert"
 import CloseIcon from "@material-ui/icons/Close"
 
 const useStyles = makeStyles((theme) => ({
@@ -14,14 +14,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export default function CustomAlert({ alertOpen, alert, resetAlert }) {
+export default function CustomAlert({
+  alertOpen,
+  alert,
+  resetAlert,
+  className,
+}) {
   const classes = useStyles()
 
   return (
-    <div className={classes.root}>
+    <div className={className || classes.root}>
       <Collapse in={alertOpen}>
         <Alert
-          severity={alert.severity || "success"}
+          severity={alert.type || ""}
           action={
             <IconButton
               aria-label="close"

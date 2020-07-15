@@ -1,4 +1,5 @@
 import React from "react"
+import CustomAlert from "../generic/CustomAlert"
 import { useParams } from "react-router-dom"
 import axios from "axios"
 import {
@@ -16,15 +17,11 @@ import { useAuthState } from "../../contexts/authContext"
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
-    marginBottom: theme.spacing(16),
+    marginBottom: theme.spacing(20),
     minWidth: 120,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
-  },
-  leftRow: {
-    display: "flex",
-    flexDirection: "column",
   },
   button: {
     marginBottom: theme.spacing(1),
@@ -38,25 +35,45 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     width: "100%",
   },
+  btnDiv: {
+    display: "flex",
+    flexDirection: "column",
+    position: "relative",
+  },
+  alert: {
+    position: "absolute",
+    top: "-70px",
+    left: 0,
+    width: "100%",
+  },
 }))
 
-function VotingInterface({ poll }) {
+function VotingInterface({ poll, setPoll }) {
   const params = useParams()
   const classes = useStyles()
   const authState = useAuthState()
   const [isLoading, setIsLoading] = React.useState(false)
   const [option, setOption] = React.useState("")
   const [newOption, setNewOption] = React.useState("")
-  const [alert, setAlert] = React.useState("")
+  const [alert, setAlert] = React.useState({
+    open: false,
+    type: "",
+    message: "",
+  })
+  const resetAlert = () => setAlert({ open: false, type: "", message: "" })
 
   const handleChange = (event) => {
+    alert.open && resetAlert()
     setOption(event.target.value)
   }
   const handleNewOptionChange = (event) => {
+    alert.open && resetAlert()
+
     setNewOption(event.target.value)
   }
 
   const handleSubmit = async () => {
+    alert.open && resetAlert()
     setIsLoading(true)
     const voter = authState.user._id
     const selection = newOption || option
@@ -68,20 +85,25 @@ function VotingInterface({ poll }) {
       )
       setIsLoading(false)
       setOption("")
-      response.status === 200
-        ? setAlert({
-            open: true,
-            type: "success",
-            message: response.data.message,
-          })
-        : setAlert({ open: true, type: "error", message: response.message })
+
+      setAlert({
+        open: true,
+        type: "success",
+        message: response.data.message,
+      })
+      setPoll((prevState) => ({
+        ...prevState,
+        results: {
+          ...prevState.results,
+          [selection]: prevState.results[selection] + 1,
+        },
+      }))
     } catch (error) {
-      console.log(error)
       setIsLoading(false)
       setAlert({
         open: true,
         type: "error",
-        message: "Something went wrong",
+        message: error.response.data,
       })
     }
   }
@@ -126,18 +148,30 @@ function VotingInterface({ poll }) {
           />
         ) : null}
       </FormControl>
-
-      <Button
-        className={classes.button}
-        onClick={handleSubmit}
-        variant="contained"
-        color="primary"
-      >
-        Submit
-      </Button>
-      <Button className={classes.button} variant="contained" color="secondary">
-        Share on twitter
-      </Button>
+      <div className={classes.btnDiv}>
+        <CustomAlert
+          className={classes.alert}
+          alertOpen={alert.open}
+          alert={alert}
+          resetAlert={resetAlert}
+        />
+        <Button
+          disabled={isLoading}
+          className={classes.button}
+          onClick={handleSubmit}
+          variant="contained"
+          color="primary"
+        >
+          Submit
+        </Button>
+        <Button
+          className={classes.button}
+          variant="contained"
+          color="secondary"
+        >
+          Share on twitter
+        </Button>
+      </div>
     </>
   )
 }

@@ -1,5 +1,6 @@
 import React from "react"
 import { useHistory } from "react-router-dom"
+import { useAuthState } from "../../contexts/authContext"
 import { makeStyles } from "@material-ui/core/styles"
 import {
   ListItem,
@@ -10,21 +11,34 @@ import {
   CircularProgress,
 } from "@material-ui/core"
 import DeleteIcon from "@material-ui/icons/Delete"
-
+import AlertDialog from "./AlertDialog"
 import axios from "axios"
-import { useAuthState } from "../../contexts/authContext"
+
 const useStyles = makeStyles((theme) => ({
   text: {
     marginRight: theme.spacing(2),
   },
+  iconButton: {
+    padding: theme.spacing(1),
+  },
 }))
+
 function PollItem({ index, poll, refreshPolls }) {
-  const [isLoading, setIsLoading] = React.useState(false)
-  const classes = useStyles()
   const authState = useAuthState()
   const history = useHistory()
+  const classes = useStyles()
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [open, setOpen] = React.useState()
+
   const handleClick = () => {
     history.push(`/polls/${poll._id}`)
+  }
+  const handleDialogClickOpen = () => {
+    setOpen(true)
+  }
+
+  const handleDialogClose = () => {
+    setOpen(false)
   }
   const handleDelete = async () => {
     try {
@@ -42,32 +56,32 @@ function PollItem({ index, poll, refreshPolls }) {
     }
   }
 
-  const Item = () => (
-    <ListItem className={classes.item} onClick={handleClick} button>
-      <ListItemText className={classes.text} primary={poll.title} />
-      {isLoading ? (
-        <CircularProgress size={16} thickness={2} />
-      ) : poll.author === authState.user._id ? (
-        <ListItemSecondaryAction>
-          <IconButton
-            edge="end"
-            aria-label="delete"
-            id={`delete-${index}`}
-            onClick={handleDelete}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
-      ) : null}
-    </ListItem>
-  )
-
-  return index === 0 ? (
-    <Item />
-  ) : (
+  return (
     <>
-      <Divider />
-      <Item />
+      {index !== 0 ? <Divider /> : null}
+      <ListItem className={classes.item} onClick={handleClick} button>
+        <ListItemText className={classes.text} primary={poll.title} />
+        {isLoading ? (
+          <CircularProgress size={16} thickness={2} />
+        ) : poll.author === authState.user._id ? (
+          <ListItemSecondaryAction>
+            <IconButton
+              className={classes.iconButton}
+              edge="end"
+              aria-label="delete"
+              id={`delete-${index}`}
+              onClick={handleDialogClickOpen}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        ) : null}
+      </ListItem>
+      <AlertDialog
+        open={open}
+        handleAction={handleDelete}
+        handleClose={handleDialogClose}
+      />
     </>
   )
 }

@@ -32,7 +32,7 @@ module.exports = {
     })
     user.polls.push(poll)
     user.save()
-    res.send({ message: "New poll successfully created", pollId: poll._id })
+    res.send({ message: "Poll successfully created", pollId: poll._id })
   },
   getPoll: async (req, res, next) => {
     const poll = await Poll.findById(req.params.pollId)
@@ -43,7 +43,7 @@ module.exports = {
     const { selection, voter } = req.body
     const poll = await Poll.findById(req.params.pollId)
     if (poll.voters.includes(voter)) {
-      res.status(500).send("You can only vote once for the same poll")
+      res.status(401).send("You can only vote once")
     } else {
       let resultsObj = {}
       if (poll.results.hasOwnProperty(selection)) {
@@ -57,7 +57,7 @@ module.exports = {
       poll.results = resultsObj
       poll.voters.push(voter)
       await poll.save()
-      res.send("Your vote has been accounted for")
+      res.send({ message: "We got your vote!" })
     }
   },
   deletePoll: async (req, res, next) => {

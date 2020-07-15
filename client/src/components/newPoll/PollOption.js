@@ -1,5 +1,4 @@
 import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
 import { Divider, IconButton, ListItemText, ListItem } from "@material-ui/core"
 import DeleteIcon from "@material-ui/icons/Delete"
 function PollOption({ option, index, setOptions }) {

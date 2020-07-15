@@ -1,37 +1,34 @@
 import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import AppBar from "@material-ui/core/AppBar"
-import Toolbar from "@material-ui/core/Toolbar"
-import Typography from "@material-ui/core/Typography"
-import Button from "@material-ui/core/Button"
-import IconButton from "@material-ui/core/IconButton"
-import Menu from "@material-ui/core/Menu"
-import MenuItem from "@material-ui/core/MenuItem"
-
-import MenuIcon from "@material-ui/icons/Menu"
 import { useAuthState } from "../../contexts/authContext"
+import { makeStyles } from "@material-ui/core/styles"
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@material-ui/core"
+import MenuIcon from "@material-ui/icons/Menu"
 import { Link } from "react-router-dom"
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  menuButton: {},
   title: {
     flexGrow: 1,
   },
 }))
 
 function Navbar() {
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  const open = Boolean(anchorEl)
-
   const state = useAuthState()
   const classes = useStyles()
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const open = Boolean(anchorEl)
   const handleLogin = async () => {
     window.open("http://localhost:5000/api/auth/twitter", "_self")
   }
-
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }

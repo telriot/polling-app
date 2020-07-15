@@ -2,6 +2,7 @@ import React from "react"
 import { useHistory } from "react-router-dom"
 import { useAuthState } from "../../contexts/authContext"
 import { makeStyles } from "@material-ui/core/styles"
+import useMediaQuery from "@material-ui/core/useMediaQuery"
 import {
   Button,
   InputAdornment,
@@ -12,13 +13,17 @@ import {
   Typography,
   TextField,
 } from "@material-ui/core"
-import CustomAlert from "../generic/CustomAlert"
-
 import AddIcon from "@material-ui/icons/Add"
+import CustomAlert from "../generic/CustomAlert"
 import PollOption from "./PollOption"
 import axios from "axios"
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    [theme.breakpoints.down("xs")]: {
+      padding: theme.spacing(0),
+    },
+  },
   paper: {
     padding: theme.spacing(3),
     display: "flex",
@@ -40,6 +45,7 @@ function NewPoll() {
   const history = useHistory()
   const authState = useAuthState()
   const classes = useStyles()
+  const isSM = useMediaQuery("(min-width:600px)")
   const [alert, setAlert] = React.useState({
     open: false,
     type: "",
@@ -61,25 +67,19 @@ function NewPoll() {
   const handleNewOptionChange = (event) => {
     alert.open && resetAlert()
     newPoll && setNewPoll("")
-
     setNewOption(event.target.value)
   }
-
   const handleKeyUp = (event) => {
-    if (event.key == "Enter") {
-      handleOptionSubmit()
-    }
+    event.key === "Enter" && handleOptionSubmit()
   }
   const handleOptionSubmit = () => {
     alert.open && resetAlert()
     newPoll && setNewPoll("")
-
     if (newOption) {
       setOptions((prevState) => [...prevState, newOption])
       setNewOption("")
     }
   }
-
   const handlePollSubmit = async () => {
     resetAlert()
     setIsLoading(true)
@@ -109,11 +109,12 @@ function NewPoll() {
       })
     }
   }
+
   const handleNavigateToPoll = () => history.push(`polls/${newPoll}`)
 
   return (
-    <Container>
-      <Paper className={classes.paper} elevation={3}>
+    <Container className={classes.container}>
+      <Paper className={classes.paper} elevation={isSM ? 3 : 0}>
         <Typography gutterBottom variant="h3">
           Make a new poll!
         </Typography>

@@ -9,7 +9,9 @@ import { makeStyles } from "@material-ui/core/styles"
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    paddingTop: "40px",
+    [theme.breakpoints.up("sm")]: {
+      paddingTop: "40px",
+    },
   },
 }))
 function App() {
