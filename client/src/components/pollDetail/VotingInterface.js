@@ -60,8 +60,12 @@ function VotingInterface({ poll, setPoll }) {
     type: "",
     message: "",
   })
-  const resetAlert = () => setAlert({ open: false, type: "", message: "" })
-
+  const resetAlert = () =>
+    setAlert((prevState) => ({
+      open: false,
+      type: prevState.type,
+      message: "",
+    }))
   const handleChange = (event) => {
     alert.open && resetAlert()
     setOption(event.target.value)

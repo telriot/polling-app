@@ -7,7 +7,6 @@ module.exports = {
   getUserPolls: async (req, res, next) => {
     const user = await User.findById(req.params.id).populate("polls").exec()
     if (!user) res.status(401).send("Requested user is not in the database")
-    console.log(user)
     res.send(user.polls)
   },
 }

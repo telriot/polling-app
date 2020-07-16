@@ -26,7 +26,7 @@ export default function CustomAlert({
     <div className={className || classes.root}>
       <Collapse in={alertOpen}>
         <Alert
-          severity={alert.type || ""}
+          severity={alert.type || "info"}
           action={
             <IconButton
               aria-label="close"

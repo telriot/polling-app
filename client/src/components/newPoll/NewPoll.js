@@ -3,20 +3,12 @@ import { useHistory } from "react-router-dom"
 import { useAuthState } from "../../contexts/authContext"
 import { makeStyles } from "@material-ui/core/styles"
 import useMediaQuery from "@material-ui/core/useMediaQuery"
-import {
-  Button,
-  InputAdornment,
-  IconButton,
-  List,
-  Paper,
-  Container,
-  Typography,
-  TextField,
-} from "@material-ui/core"
-import AddIcon from "@material-ui/icons/Add"
+import { List, Paper, Container, Typography } from "@material-ui/core"
 import CustomAlert from "../generic/CustomAlert"
 import PollOption from "./PollOption"
 import axios from "axios"
+import InputFields from "./InputFields"
+import Buttons from "./Buttons"
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -25,19 +17,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   paper: {
-    padding: theme.spacing(3),
     display: "flex",
     flexDirection: "column",
-  },
-  input: {
-    marginBottom: theme.spacing(3),
+    padding: theme.spacing(3),
   },
   btnDiv: {
     display: "flex",
-  },
-  button: {
-    alignSelf: "start",
-    marginRight: theme.spacing(1),
   },
 }))
 
@@ -57,7 +42,12 @@ function NewPoll() {
   const [title, setTitle] = React.useState("")
   const [newPoll, setNewPoll] = React.useState("")
 
-  const resetAlert = () => setAlert({ open: false, type: "", message: "" })
+  const resetAlert = () =>
+    setAlert((prevState) => ({
+      open: false,
+      type: prevState.type,
+      message: "",
+    }))
 
   const handleTitleChange = (event) => {
     alert.open && resetAlert()
@@ -89,23 +79,19 @@ function NewPoll() {
       setIsLoading(false)
       setTitle("")
       setOptions([])
-      if (response.status === 200) {
-        setAlert({
-          open: true,
-          type: "success",
-          message: response.data.message,
-        })
-        setNewPoll(response.data.pollId)
-      } else {
-        setAlert({ open: true, type: "error", message: response.data.message })
-      }
+
+      setAlert({
+        open: true,
+        type: "success",
+        message: response.data.message,
+      })
+      setNewPoll(response.data.pollId)
     } catch (error) {
-      console.log(error)
       setIsLoading(false)
       setAlert({
         open: true,
         type: "error",
-        message: "Something went wrong",
+        message: error.response.data,
       })
     }
   }
@@ -113,46 +99,23 @@ function NewPoll() {
   const handleNavigateToPoll = () => history.push(`polls/${newPoll}`)
 
   return (
-    <Container className={classes.container}>
+    <Container data-testid="component-newpoll" className={classes.container}>
       <Paper className={classes.paper} elevation={isSM ? 3 : 0}>
         <Typography gutterBottom variant="h3">
           Make a new poll!
         </Typography>
-        <TextField
-          className={classes.input}
-          id="poll-title"
-          label="Title"
-          value={title}
-          onChange={handleTitleChange}
-          variant="filled"
-        />
-        <TextField
-          className={classes.input}
-          id="poll-new-option"
-          label="New Option"
-          value={newOption}
-          onKeyUp={handleKeyUp}
-          onChange={handleNewOptionChange}
-          variant="filled"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  disabled={!newOption}
-                  edge="end"
-                  aria-label="delete"
-                  id="add-btn"
-                  onClick={handleOptionSubmit}
-                >
-                  <AddIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+        <InputFields
+          handleTitleChange={handleTitleChange}
+          handleKeyUp={handleKeyUp}
+          handleNewOptionChange={handleNewOptionChange}
+          handleOptionSubmit={handleOptionSubmit}
+          title={title}
+          newOption={newOption}
         />
         <List>
           {options.map((option, index) => (
             <PollOption
+              data-testid="poll-option"
               key={`option${index}`}
               option={option}
               index={index}
@@ -167,26 +130,15 @@ function NewPoll() {
           alertOpen={alert.open}
         />
         <div className={classes.btnDiv}>
-          <Button
-            disabled={isLoading || !authState.user}
-            className={classes.button}
-            variant="contained"
-            color="primary"
-            onClick={handlePollSubmit}
-          >
-            Submit
-          </Button>
-          {newPoll ? (
-            <Button
-              disabled={isLoading || !authState.user}
-              className={classes.button}
-              variant="contained"
-              color="secondary"
-              onClick={handleNavigateToPoll}
-            >
-              Visit your poll
-            </Button>
-          ) : null}
+          <Buttons
+            title={title}
+            options={options}
+            isLoading={isLoading}
+            user={authState.user}
+            newPoll={newPoll}
+            handlePollSubmit={handlePollSubmit}
+            handleNavigateToPoll={handleNavigateToPoll}
+          />
         </div>
       </Paper>
     </Container>

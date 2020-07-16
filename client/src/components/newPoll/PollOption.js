@@ -10,6 +10,7 @@ function PollOption({ option, index, setOptions }) {
     <ListItem button>
       <ListItemText primary={option} />
       <IconButton
+        data-testid="poll-option-delete"
         edge="end"
         aria-label="delete"
         id={`delete-${index}`}

@@ -20,9 +20,7 @@ module.exports = {
 
     const user = await User.findById(author).populate("polls").exec()
     if (!user) {
-      res
-        .status(401)
-        .send({ message: "You have to be a registered user to post new polls" })
+      res.status(401).send("You have to be a registered user to post new polls")
     }
     const poll = await Poll.create({
       title,
@@ -61,7 +59,6 @@ module.exports = {
     }
   },
   deletePoll: async (req, res, next) => {
-    console.log(req.params.pollId)
     await Poll.findByIdAndDelete(req.params.pollId)
     res.send("Poll successfully deleted")
   },

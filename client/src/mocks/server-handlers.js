@@ -43,4 +43,13 @@ export const handlers = [
       ])
     )
   }),
+  rest.post("/api/polls/new", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        message: "Poll successfully created",
+        pollId: "123456789",
+      })
+    )
+  }),
 ]
