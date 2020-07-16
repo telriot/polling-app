@@ -36,26 +36,34 @@ function Landing() {
   const isSM = useMediaQuery("(min-width:600px)")
   const [allPolls, setAllPolls] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(false)
+  const CancelToken = axios.CancelToken
+  const source = CancelToken.source()
 
-  const fetchAllPolls = async () => {
+  const fetchAllPolls = async (setLoader, setData) => {
     try {
       setIsLoading(true)
-      const response = await axios.get("/api/polls/")
+      const response = await axios.get("/api/polls/", {
+        cancelToken: source.token,
+      })
       setAllPolls(response.data)
       setIsLoading(false)
     } catch (error) {
-      setIsLoading(false)
-
-      console.log(error)
+      if (axios.isCancel(error)) {
+        console.log("Request canceled", error.message)
+      } else {
+        setIsLoading(false)
+        console.log(error)
+      }
     }
   }
 
   React.useEffect(() => {
     fetchAllPolls()
+    return () => source.cancel()
   }, [])
 
   return (
-    <Container className={classes.container}>
+    <Container data-testid="component-landing" className={classes.container}>
       <Paper className={classes.paper} elevation={isSM ? 3 : 0}>
         <Typography align="center" gutterBottom variant="h3">
           Polling App
@@ -68,6 +76,7 @@ function Landing() {
         </Typography>
         {isLoading ? (
           <CircularProgress
+            data-testid="spinner"
             className={classes.spinner}
             size={80}
             thickness={6}
@@ -77,6 +86,7 @@ function Landing() {
             {allPolls.length
               ? allPolls.map((poll, index) => (
                   <PollItem
+                    key={`poll-${index}`}
                     refreshPolls={setAllPolls}
                     index={index}
                     poll={poll}

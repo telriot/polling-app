@@ -4,7 +4,7 @@ const User = require("../models/User")
 module.exports = {
   getPolls: async (req, res, next) => {
     const polls = await Poll.find()
-    res.send(polls)
+    res.json(polls)
   },
   newPoll: async (req, res, next) => {
     const { title, options, author } = req.body

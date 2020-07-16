@@ -28,7 +28,7 @@ function PollItem({ index, poll, refreshPolls }) {
   const history = useHistory()
   const classes = useStyles()
   const [isLoading, setIsLoading] = React.useState(false)
-  const [open, setOpen] = React.useState()
+  const [open, setOpen] = React.useState(false)
 
   const handleClick = () => {
     history.push(`/polls/${poll._id}`)

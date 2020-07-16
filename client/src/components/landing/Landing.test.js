@@ -1,0 +1,56 @@
+import React from "react"
+import {
+  render,
+  cleanup,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react"
+import { AuthStateContext } from "../../contexts/authContext"
+import { server, rest } from "../../mocks/server"
+
+import Landing from "./Landing"
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
+
+afterEach(cleanup)
+
+let authState = {
+  isAuthenticated: true,
+  user: "test",
+}
+describe("Landing tests", () => {
+  let getByTestId, getByText, queryByTestId, getAllByText, debug, getByRole
+  beforeEach(() => {
+    return ({
+      getByTestId,
+      getByText,
+      getAllByText,
+      queryByTestId,
+      debug,
+      getByRole,
+    } = render(
+      <AuthStateContext.Provider value={authState}>
+        <Landing />
+      </AuthStateContext.Provider>
+    ))
+  })
+  test("Landing renders successfully", () => {
+    expect(getByTestId("component-landing")).toBeDefined()
+  })
+  test("Title renders correctly", () => {
+    expect(getByText(/Polling App/)).toBeDefined()
+  })
+  test("Spinner shows when loading", () => {
+    expect(getByTestId("spinner")).toBeDefined()
+  })
+  test("Spinner disappears after loading", async () => {
+    await waitForElementToBeRemoved(() => queryByTestId("spinner"))
+  })
+  test("The right number of polls shows after loading", async () => {
+    await waitFor(() => {
+      expect(getAllByText(/titolo/)).toHaveLength(2)
+    })
+  })
+})
