@@ -39,7 +39,7 @@ function Landing() {
   const CancelToken = axios.CancelToken
   const source = CancelToken.source()
 
-  const fetchAllPolls = async (setLoader, setData) => {
+  const fetchAllPolls = async () => {
     try {
       setIsLoading(true)
       const response = await axios.get("/api/polls/", {

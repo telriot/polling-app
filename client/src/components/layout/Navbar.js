@@ -39,6 +39,13 @@ function Navbar() {
     handleClose()
     window.open("http://localhost:5000/api/auth/logout", "_self")
   }
+
+  const loggedMenuItems = [
+    { title: "My Polls", link: "/my-polls", action: handleClose },
+    { title: "New Polls", link: "/new-poll", action: handleClose },
+    { title: "Logout", link: null, action: handleLogout },
+  ]
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -73,15 +80,15 @@ function Navbar() {
             onClose={handleClose}
           >
             {state.isAuthenticated ? (
-              <>
-                <MenuItem onClick={handleClose}>
-                  <Link to="/my-polls">My Polls</Link>
+              loggedMenuItems.map((item, index) => (
+                <MenuItem key={`menuitem-${index}`} onClick={item.action}>
+                  {item.link ? (
+                    <Link to={item.link}>{item.title}</Link>
+                  ) : (
+                    item.title
+                  )}
                 </MenuItem>
-                <MenuItem onClick={handleClose}>
-                  <Link to="/new-poll">New Poll</Link>
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
-              </>
+              ))
             ) : (
               <MenuItem onClick={handleLogin}>Login</MenuItem>
             )}
