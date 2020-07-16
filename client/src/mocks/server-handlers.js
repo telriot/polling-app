@@ -52,4 +52,16 @@ export const handlers = [
       })
     )
   }),
+  rest.get("/api/polls/:pollId", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        author: "test",
+        title: "titolo",
+        options: ["a", "b"],
+        results: { canidi: 1, gattidi: 2 },
+        votes: 3,
+      })
+    )
+  }),
 ]

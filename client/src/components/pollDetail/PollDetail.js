@@ -68,10 +68,11 @@ function PollDetail() {
   }, [params.pollId])
 
   return (
-    <Container className={classes.container}>
+    <Container data-testid="component-polldetail" className={classes.container}>
       <Paper className={classes.paper} elevation={isSM ? 3 : 0}>
         {isLoading ? (
           <CircularProgress
+            data-testid="spinner"
             className={classes.spinner}
             size={80}
             thickness={6}
