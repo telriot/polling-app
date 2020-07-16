@@ -38,24 +38,36 @@ function MyPolls() {
   const [myPolls, setMyPolls] = React.useState([])
   const [isLoading, setIsLoading] = React.useState([])
   const isSM = useMediaQuery("(min-width:600px)")
+  const CancelToken = axios.CancelToken
+  const source = CancelToken.source()
 
   const fetchMyPolls = async () => {
     try {
       setIsLoading(true)
-      const response = await axios.get(`/api/users/polls/${authState.user._id}`)
+      const response = await axios.get(
+        `/api/users/polls/${authState.user._id}`,
+        {
+          cancelToken: source.token,
+        }
+      )
       setMyPolls(response.data)
       setIsLoading(false)
     } catch (error) {
-      setIsLoading(false)
-      console.log(error)
+      if (axios.isCancel(error)) {
+        console.log("Request canceled", error.message)
+      } else {
+        setIsLoading(false)
+        console.log(error)
+      }
     }
   }
   React.useEffect(() => {
     authState.user && fetchMyPolls()
+    return () => source.cancel()
   }, [authState.user])
 
   return (
-    <Container className={classes.container}>
+    <Container data-testid="component-mypolls" className={classes.container}>
       <Paper className={classes.paper} elevation={isSM ? 3 : 0}>
         <Typography align="center" gutterBottom variant="h3">
           Polling App
@@ -68,6 +80,7 @@ function MyPolls() {
         </Typography>
         {isLoading ? (
           <CircularProgress
+            data-testid="spinner"
             className={classes.spinner}
             size={80}
             thickness={6}
@@ -77,6 +90,7 @@ function MyPolls() {
             {myPolls.length
               ? myPolls.map((poll, index) => (
                   <PollItem
+                    key={`poll-${index}`}
                     refreshPolls={setMyPolls}
                     index={index}
                     poll={poll}
