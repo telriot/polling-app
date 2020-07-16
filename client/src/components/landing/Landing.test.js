@@ -6,7 +6,7 @@ import {
   waitForElementToBeRemoved,
 } from "@testing-library/react"
 import { AuthStateContext } from "../../contexts/authContext"
-import { server, rest } from "../../mocks/server"
+import { server } from "../../mocks/server"
 
 import Landing from "./Landing"
 
@@ -21,14 +21,13 @@ let authState = {
   user: "test",
 }
 describe("Landing tests", () => {
-  let getByTestId, getByText, queryByTestId, getAllByText, debug, getByRole
+  let getByTestId, getByText, queryByTestId, getAllByText, getByRole
   beforeEach(() => {
     return ({
       getByTestId,
       getByText,
       getAllByText,
       queryByTestId,
-      debug,
       getByRole,
     } = render(
       <AuthStateContext.Provider value={authState}>
