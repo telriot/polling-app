@@ -64,4 +64,12 @@ export const handlers = [
       })
     )
   }),
+  rest.put("/api/polls/vote/:pollId", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        message: "We got your vote!",
+      })
+    )
+  }),
 ]

@@ -79,7 +79,7 @@ function VotingInterface({ poll, setPoll }) {
   const handleSubmit = async () => {
     alert.open && resetAlert()
     setIsLoading(true)
-    const voter = authState.user._id
+    const voter = authState.user ? authState.user._id : "anonymous"
     const selection = newOption || option
     const voteObject = { voter, selection }
     try {
@@ -87,14 +87,15 @@ function VotingInterface({ poll, setPoll }) {
         `/api/polls/vote/${params.pollId}`,
         voteObject
       )
+      console.log(response.data)
       setIsLoading(false)
       setOption("")
-
       setAlert({
         open: true,
         type: "success",
         message: response.data.message,
       })
+
       setPoll((prevState) => ({
         ...prevState,
         results: {
@@ -171,7 +172,10 @@ function VotingInterface({ poll, setPoll }) {
         />
         <Button
           disabled={
-            !option || (option === "new-option" && !newOption) || isLoading
+            !option ||
+            (option === "new-option" && !newOption) ||
+            isLoading ||
+            !authState.user
           }
           className={classes.button}
           onClick={handleSubmit}
