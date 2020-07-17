@@ -51,20 +51,29 @@ function PollDetail() {
   const [poll, setPoll] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(false)
   const isSM = useMediaQuery("(min-width:600px)")
+  const CancelToken = axios.CancelToken
+  const source = CancelToken.source()
 
   const fetchPoll = async () => {
     try {
       setIsLoading(true)
-      const response = await axios.get(`/api/polls/${params.pollId}`)
+      const response = await axios.get(`/api/polls/${params.pollId}`, {
+        cancelToken: source.token,
+      })
       setPoll(response.data)
       setIsLoading(false)
     } catch (error) {
-      setIsLoading(false)
-      console.log(error)
+      if (axios.isCancel(error)) {
+        console.log("Request canceled", error.message)
+      } else {
+        setIsLoading(false)
+        console.log(error)
+      }
     }
   }
   React.useEffect(() => {
     params.pollId && fetchPoll()
+    return () => source.cancel()
   }, [params.pollId])
 
   return (

@@ -63,7 +63,7 @@ function PollItem({ index, poll, refreshPolls }) {
         <ListItemText className={classes.text} primary={poll.title} />
         {isLoading ? (
           <CircularProgress size={16} thickness={2} />
-        ) : poll.author === authState.user._id ? (
+        ) : authState.user && poll.author === authState.user._id ? (
           <ListItemSecondaryAction>
             <IconButton
               className={classes.iconButton}

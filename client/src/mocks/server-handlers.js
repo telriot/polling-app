@@ -58,7 +58,7 @@ export const handlers = [
       ctx.json({
         author: "test",
         title: "titolo",
-        options: ["a", "b"],
+        options: ["option1", "option2"],
         results: { canidi: 1, gattidi: 2 },
         votes: 3,
       })

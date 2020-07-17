@@ -130,13 +130,22 @@ function VotingInterface({ poll, setPoll }) {
           displayEmpty
           disabled={!poll.options}
           className={classes.selectEmpty}
+          SelectDisplayProps={{
+            "data-testid": "options-select",
+          }}
         >
           <MenuItem value="">
             <em>Pick one</em>
           </MenuItem>
           {poll.options
             ? poll.options.map((option, index) => (
-                <MenuItem value={option}>{option}</MenuItem>
+                <MenuItem
+                  data-testid={`menu-item-${index}`}
+                  key={`menu-item-${index}`}
+                  value={option}
+                >
+                  {option}
+                </MenuItem>
               ))
             : null}
           <MenuItem value="new-option">Create new option</MenuItem>
@@ -144,6 +153,7 @@ function VotingInterface({ poll, setPoll }) {
         {option === "new-option" ? (
           <TextField
             className={classes.input}
+            inputProps={{ "data-testid": "new-option-field" }}
             id="new-option"
             label="My Option"
             value={newOption}
@@ -160,11 +170,14 @@ function VotingInterface({ poll, setPoll }) {
           resetAlert={resetAlert}
         />
         <Button
-          disabled={isLoading}
+          disabled={
+            !option || (option === "new-option" && !newOption) || isLoading
+          }
           className={classes.button}
           onClick={handleSubmit}
           variant="contained"
           color="primary"
+          data-testid="submit-button"
         >
           Submit
         </Button>
